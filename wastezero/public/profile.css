@@ -1,0 +1,103 @@
+/* Basic container styling */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f5f6fa;
+  margin: 0;
+  padding: 20px;
+}
+
+h1, h2 {
+  color: #2f3640;
+}
+
+/* Profile display card */
+#profileDisplay {
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  max-width: 500px;
+  margin-bottom: 20px;
+}
+
+#profileDisplay p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+#profileDisplay button {
+  padding: 10px 20px;
+  background-color: #0097e6;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+#profileDisplay button:hover {
+  background-color: #0984e3;
+}
+
+/* Profile form container */
+#profileFormContainer {
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  max-width: 500px;
+}
+
+#profileFormContainer h2 {
+  margin-top: 0;
+}
+
+#profileFormContainer input,
+#profileFormContainer select {
+  width: 100%;
+  padding: 10px 12px;
+  margin: 10px 0;
+  border: 1px solid #dcdde1;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+#profileFormContainer button {
+  padding: 10px 20px;
+  background-color: #44bd32;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+#profileFormContainer button:hover {
+  background-color: #4cd137;
+}
+
+/* Logout button styling */
+.logout {
+  padding: 10px 20px;
+  background-color: #e84118;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 20px;
+}
+
+.logout:hover {
+  background-color: #c23616;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  #profileDisplay, #profileFormContainer {
+    max-width: 100%;
+    padding: 15px;
+  }
+}

@@ -1,0 +1,30 @@
+  <link rel="stylesheet" href="profile.css">
+<h1>My Profile</h1>
+
+<!-- Profile display -->
+<div id="profileDisplay" style="display:none;">
+  <p><strong>Full Name:</strong> <span id="profileName"></span></p>
+  <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+  <p><strong>Location:</strong> <span id="profileLocation"></span></p>
+  <p><strong>Role/Skill:</strong> <span id="profileRole"></span></p>
+  <p><strong>Member Since:</strong> <span id="profileSince"></span></p>
+  <button id="editProfileBtn">Edit Profile</button>
+</div>
+
+<!-- Profile creation / edit form -->
+<div id="profileFormContainer">
+  <h2 id="formTitle">Create Your Profile</h2>
+  <input type="text" id="profileFullName" placeholder="Full Name" required />
+  <input type="text" id="profileLocation" placeholder="Location" required />
+  <select id="profileRole" required>
+    <option value="" disabled selected>Select Role/Skill</option>
+    <option value="user">User</option>
+    <option value="volunteer">Volunteer</option>
+    <option value="ngo">NGO</option>
+    <option value="admin">Admin</option>
+  </select>
+  <input type="password" id="profilePassword" placeholder="Password" required />
+  <button id="saveProfileBtn">Save Profile</button>
+</div>
+
+<button class="logout">Logout</button>
