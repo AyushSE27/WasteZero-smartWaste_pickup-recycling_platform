@@ -1,30 +1,46 @@
-  <link rel="stylesheet" href="profile.css">
-<h1>My Profile</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile</title>
+  <link rel="stylesheet" href="profile.css" />
+</head>
+<body>
 
-<!-- Profile display -->
-<div id="profileDisplay" style="display:none;">
-  <p><strong>Full Name:</strong> <span id="profileName"></span></p>
-  <p><strong>Email:</strong> <span id="profileEmail"></span></p>
-  <p><strong>Location:</strong> <span id="profileLocation"></span></p>
-  <p><strong>Role/Skill:</strong> <span id="profileRole"></span></p>
-  <p><strong>Member Since:</strong> <span id="profileSince"></span></p>
-  <button id="editProfileBtn">Edit Profile</button>
+<div class="profile-container">
+  <h2>My Profile</h2>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button id="profileTab" class="tab active">Profile</button>
+    <button id="passwordTab" class="tab">Password</button>
+  </div>
+
+  <!-- Profile Form -->
+  <form id="profileForm" class="card">
+    <input type="text" id="name" placeholder="Full Name" />
+    <input type="email" id="email" disabled />
+    <input type="text" id="location" placeholder="Location" />
+
+    <!-- Role Dropdown -->
+    <select id="role">
+      <option value="Volunteer">Volunteer</option>
+      <option value="NGO">NGO</option>
+      <option value="Admin">Admin</option>
+    </select>
+
+    <button type="submit" class="blue-btn">Update Profile</button>
+  </form>
+
+  <!-- Password Form -->
+  <form id="passwordForm" class="card hidden">
+    <input type="password" id="currentPassword" placeholder="Current Password" />
+    <input type="password" id="newPassword" placeholder="New Password" />
+    <button type="submit" class="blue-btn">Change Password</button>
+  </form>
 </div>
 
-<!-- Profile creation / edit form -->
-<div id="profileFormContainer">
-  <h2 id="formTitle">Create Your Profile</h2>
-  <input type="text" id="profileFullName" placeholder="Full Name" required />
-  <input type="text" id="profileLocation" placeholder="Location" required />
-  <select id="profileRole" required>
-    <option value="" disabled selected>Select Role/Skill</option>
-    <option value="user">User</option>
-    <option value="volunteer">Volunteer</option>
-    <option value="ngo">NGO</option>
-    <option value="admin">Admin</option>
-  </select>
-  <input type="password" id="profilePassword" placeholder="Password" required />
-  <button id="saveProfileBtn">Save Profile</button>
-</div>
-
-<button class="logout">Logout</button>
+<script src="profile.js"></script>
+</body>
+</html>

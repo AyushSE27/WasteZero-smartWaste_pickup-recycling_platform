@@ -1,103 +1,97 @@
-/* Basic container styling */
-body {
-  font-family: 'Poppins', sans-serif;
-  background-color: #f5f6fa;
+* {
   margin: 0;
-  padding: 20px;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
 }
 
-h1, h2 {
-  color: #2f3640;
+body {
+  background: #f5f7fa;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Profile display card */
-#profileDisplay {
-  background: #fff;
-  padding: 20px 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  max-width: 500px;
+/* Container */
+.profile-container {
+  width: 450px;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
   margin-bottom: 20px;
 }
 
-#profileDisplay p {
-  margin: 10px 0;
-  font-size: 16px;
-}
-
-#profileDisplay button {
-  padding: 10px 20px;
-  background-color: #0097e6;
-  color: #fff;
+.tab {
+  flex: 1;
+  padding: 12px;
   border: none;
-  border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
-  margin-top: 10px;
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 600;
+  border-radius: 10px 10px 0 0;
 }
 
-#profileDisplay button:hover {
-  background-color: #0984e3;
+.tab.active {
+  background: #1976d2;
+  color: white;
 }
 
-/* Profile form container */
-#profileFormContainer {
-  background: #fff;
-  padding: 20px 30px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  max-width: 500px;
+/* Card Forms */
+.card {
+  background: #fafafa;
+  padding: 20px;
+  border-radius: 0 0 12px 12px;
+  border: 1px solid #eee;
 }
 
-#profileFormContainer h2 {
-  margin-top: 0;
+.hidden {
+  display: none;
 }
 
-#profileFormContainer input,
-#profileFormContainer select {
+/* Inputs */
+input, select {
   width: 100%;
-  padding: 10px 12px;
-  margin: 10px 0;
-  border: 1px solid #dcdde1;
-  border-radius: 6px;
+  padding: 12px 14px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  outline: none;
   font-size: 14px;
+  transition: 0.3s ease;
 }
 
-#profileFormContainer button {
-  padding: 10px 20px;
-  background-color: #44bd32;
-  color: #fff;
+input:focus, select:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
+}
+
+.blue-btn {
+  width: 100%;
+  padding: 12px;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
+  background: #1976d2;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  font-size: 14px;
-  margin-top: 10px;
+  transition: 0.3s ease;
 }
 
-#profileFormContainer button:hover {
-  background-color: #4cd137;
-}
-
-/* Logout button styling */
-.logout {
-  padding: 10px 20px;
-  background-color: #e84118;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  margin-top: 20px;
-}
-
-.logout:hover {
-  background-color: #c23616;
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-  #profileDisplay, #profileFormContainer {
-    max-width: 100%;
-    padding: 15px;
-  }
+.blue-btn:hover {
+  background: #1565c0;
 }
