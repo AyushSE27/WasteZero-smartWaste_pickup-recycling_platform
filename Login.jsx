@@ -8,26 +8,49 @@ function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [otp, setOtp] = useState("");
+  const [step, setStep] = useState("login"); // login or otp
   const handleLogin = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const res = await fetch("http://127.0.0.1:5000/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
+  const res = await fetch("http://localhost:3000/api/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+  });
 
-    const data = await res.json();
+  const data = await res.json();
 
-    if (res.ok) {
-      navigate("/dashboard");
-    } else {
-      alert(data.message);
-    }
-  };
+  if (res.ok) {
+    alert("OTP sent to your email");
+    setStep("otp"); // move to OTP screen
+  } else {
+    alert(data.message);
+  }
+};
+const handleVerifyOtp = async (e) => {
+  e.preventDefault();
+
+  const res = await fetch("http://localhost:3000/api/verify-otp", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, otp }),
+  });
+
+  const data = await res.json();
+
+  if (res.ok) {
+    localStorage.setItem("token", data.token);
+    navigate("/dashboard");
+  } else {
+    alert(data.message);
+  }
+};
+
 
   return (
     <div className="page-container">
@@ -61,28 +84,51 @@ function Login() {
 
         <h2>Login</h2>
 
-        <form onSubmit={handleLogin}>
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <button type="submit" className="submit-btn">
-            Login
-          </button>
+        <form onSubmit={step === "login" ? handleLogin : handleVerifyOtp}>
+          {step === "login" ? (
+            <>
+              <div className="form-group">
+                <label>Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+          
+              <div className="form-group">
+                <label>Password</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+          
+              <button type="submit" className="submit-btn">
+                Send OTP
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="form-group">
+                <label>Enter OTP</label>
+                <input           
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  required
+                />
+              </div>
+          
+              <button type="submit" className="submit-btn">
+                Verify OTP
+              </button>
+            </>
+          )}
+          
         </form>
       </div>
     </div>

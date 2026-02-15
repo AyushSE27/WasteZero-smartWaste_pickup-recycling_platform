@@ -23,7 +23,8 @@
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.563.0",
     "mongoose": "^8.23.0",
-    "mysql2": "^3.17.0"
+    "mysql2": "^3.17.0",
+    "nodemailer": "^8.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

@@ -4,19 +4,20 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
+const nodemailer = require("nodemailer");
 
 const app = express();
 
 /* ================= MIDDLEWARE ================= */
 app.use(cors());
 app.use(express.json());
+
+// ✅ SERVE FILES FROM PUBLIC FOLDER
 app.use(express.static("public"));
 
 /* ================= MONGODB ================= */
-const MONGODB_URI = process.env.MONGODB_URI;
-
 mongoose
-  .connect(MONGODB_URI)
+  .connect(process.env.MONGODB_URI)
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch((err) => {
     console.error("❌ MongoDB error:", err);
@@ -32,15 +33,23 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-/* ================= JWT ================= */
-const JWT_SECRET = process.env.JWT_SECRET;
+/* ================= EMAIL TRANSPORTER ================= */
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
+
+/* ================= OTP STORE ================= */
+// Temporary in-memory store (for development)
+const otpStore = {};
 
 /* ================= REGISTER ================= */
 app.post("/api/register", async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password)
-      return res.status(400).json({ message: "All fields required" });
 
     const exists = await User.findOne({ email });
     if (exists)
@@ -50,13 +59,14 @@ app.post("/api/register", async (req, res) => {
     await User.create({ email, password: hashed });
 
     res.status(201).json({ message: "Registered successfully" });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Registration failed" });
   }
 });
 
-/* ================= LOGIN ================= */
+/* ================= LOGIN (SEND OTP) ================= */
 app.post("/api/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -69,39 +79,65 @@ app.post("/api/login", async (req, res) => {
     if (!match)
       return res.status(401).json({ message: "Invalid credentials" });
 
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Store OTP (expires in 5 minutes)
+    otpStore[email] = {
+      otp,
+      expires: Date.now() + 5 * 60 * 1000
+    };
+
+    console.log("Generated OTP:", otp);
+
+    // Send email
+    await transporter.sendMail({
+      from: `"WasteZero" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Your WasteZero Login OTP",
+      text: `Your OTP is ${otp}. It expires in 5 minutes.`
+    });
+
+    res.json({ message: "OTP sent successfully" });
+
+  } catch (err) {
+    console.error("Email error:", err);
+    res.status(500).json({ message: "Failed to send OTP" });
+  }
+});
+
+/* ================= VERIFY OTP ================= */
+app.post("/api/verify-otp", async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    const record = otpStore[email];
+
+    if (!record)
+      return res.status(400).json({ message: "No OTP found" });
+
+    if (Date.now() > record.expires)
+      return res.status(400).json({ message: "OTP expired" });
+
+    if (record.otp !== otp)
+      return res.status(400).json({ message: "Invalid OTP" });
+
+    delete otpStore[email];
+
+    const user = await User.findOne({ email });
+
     const token = jwt.sign(
       { userId: user._id, email: user.email },
-      JWT_SECRET,
+      process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
     res.json({ token });
+
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error during login" });
+    res.status(500).json({ message: "OTP verification failed" });
   }
-});
-
-/* ================= AUTH ================= */
-const auth = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.status(401).json({ message: "No token" });
-
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ message: "Invalid token" });
-    req.user = user;
-    next();
-  });
-};
-
-app.get("/api/profile", auth, async (req, res) => {
-  const user = await User.findById(req.user.userId).select("-password");
-  res.json(user);
-});
-
-/* ================= HEALTH ================= */
-app.get("/api/health", (req, res) => {
-  res.json({ status: "OK" });
 });
 
 /* ================= START ================= */
