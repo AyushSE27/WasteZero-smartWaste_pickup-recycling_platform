@@ -1,0 +1,84 @@
+{
+  "users": [
+    {
+      "id": "u-admin",
+      "name": "Platform Admin",
+      "email": "admin@wastezero.com",
+      "password": "$2a$08$/caLt8j0NPtGDizBMX.jhepdDM7TcF4nQpfAiXppK5LqCDfJNbS4W",
+      "role": "admin",
+      "skills": [
+        "monitoring",
+        "reporting"
+      ],
+      "location": "Delhi",
+      "bio": "System administrator",
+      "_id": 1
+    },
+    {
+      "id": "u-ngo",
+      "name": "Green NGO",
+      "email": "ngo@wastezero.com",
+      "password": "$2a$08$/caLt8j0NPtGDizBMX.jhepdDM7TcF4nQpfAiXppK5LqCDfJNbS4W",
+      "role": "ngo",
+      "skills": [
+        "plastic",
+        "organic",
+        "ewaste"
+      ],
+      "location": "Delhi",
+      "bio": "Community recycling organization",
+      "_id": 2
+    },
+    {
+      "id": "u-vol",
+      "name": "Volunteer One",
+      "email": "volunteer@wastezero.com",
+      "password": "$2a$08$/caLt8j0NPtGDizBMX.jhepdDM7TcF4nQpfAiXppK5LqCDfJNbS4W",
+      "role": "volunteer",
+      "skills": [
+        "plastic",
+        "cleanup"
+      ],
+      "location": "Delhi",
+      "bio": "Weekend cleanup volunteer",
+      "_id": 3
+    },
+    {
+      "id": "u-agent",
+      "name": "Pickup Agent",
+      "email": "agent@wastezero.com",
+      "password": "$2a$08$/caLt8j0NPtGDizBMX.jhepdDM7TcF4nQpfAiXppK5LqCDfJNbS4W",
+      "role": "agent",
+      "skills": [
+        "pickup",
+        "organic",
+        "plastic"
+      ],
+      "location": "Delhi",
+      "bio": "Assigned waste pickup agent",
+      "_id": 4
+    }
+  ],
+  "opportunities": [
+    {
+      "id": "o-1",
+      "ngo_id": "u-ngo",
+      "title": "Neighborhood Plastic Drive",
+      "description": "Collect and sort household plastic waste.",
+      "required_skills": [
+        "plastic",
+        "cleanup"
+      ],
+      "duration": "4 hours",
+      "location": "Delhi",
+      "status": "open",
+      "wasteType": "plastic",
+      "_id": 1
+    }
+  ],
+  "pickups": [],
+  "applications": [],
+  "messages": [],
+  "notifications": [],
+  "adminLogs": []
+}
