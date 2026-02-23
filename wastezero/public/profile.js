@@ -1,3 +1,30 @@
+/* ================= LOAD SIDEBAR ================= */
+fetch("sidebar.html")
+  .then(res => res.text())
+  .then(data => {
+    document.getElementById("sidebar").innerHTML = data;
+
+    // Highlight active page link
+    const links = document.querySelectorAll(".sidebar nav a");
+    links.forEach(link => {
+      if (link.getAttribute("href") === "profile.html") {
+        link.classList.add("active");
+      }
+    });
+
+    // Load user info into sidebar
+    const userName = localStorage.getItem("name") || "User";
+    const userEmail = localStorage.getItem("email") || "email@example.com";
+
+    const avatar = document.getElementById("userAvatar");
+    const nameEl = document.getElementById("userName");
+    const emailEl = document.getElementById("userEmail");
+
+    if (avatar) avatar.textContent = userName.charAt(0).toUpperCase();
+    if (nameEl) nameEl.textContent = userName;
+    if (emailEl) emailEl.textContent = userEmail;
+  });
+
 const token = localStorage.getItem("token");
 
 /* ================= TAB SWITCHING ================= */

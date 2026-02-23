@@ -2,43 +2,88 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>My Profile</title>
+  <link rel="stylesheet" href="dashboard.css" />
   <link rel="stylesheet" href="profile.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 </head>
 <body>
 
-<div class="profile-container">
-  <h2>My Profile</h2>
+<div class="layout">
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button id="profileTab" class="tab active">Profile</button>
-    <button id="passwordTab" class="tab">Password</button>
-  </div>
+  <!-- SIDEBAR (same as dashboard) -->
+  <aside class="sidebar">
+    <div class="brand">♻ WasteZero</div>
 
-  <!-- Profile Form -->
-  <form id="profileForm" class="card">
-    <input type="text" id="name" placeholder="Full Name" />
-    <input type="email" id="email" disabled />
-    <input type="text" id="location" placeholder="Location" />
+    <div class="user">
+      <div class="avatar" id="userAvatar">U</div>
+      <div>
+        <strong id="userName">User</strong>
+        <small id="userEmail">email@example.com</small>
+      </div>
+    </div>
 
-    <!-- Role Dropdown -->
-    <select id="role">
-      <option value="Volunteer">Volunteer</option>
-      <option value="NGO">NGO</option>
-      <option value="Admin">Admin</option>
-    </select>
+    <nav>
+  <a href="dashboard.html">
+    <i class="fa-solid fa-chart-line"></i> Dashboard
+  </a>
 
-    <button type="submit" class="blue-btn">Update Profile</button>
-  </form>
+  <a href="schedule-pickup.html">
+    <i class="fa-solid fa-calendar-plus"></i> Schedule Pickup
+  </a>
 
-  <!-- Password Form -->
-  <form id="passwordForm" class="card hidden">
-    <input type="password" id="currentPassword" placeholder="Current Password" />
-    <input type="password" id="newPassword" placeholder="New Password" />
-    <button type="submit" class="blue-btn">Change Password</button>
-  </form>
+  <a href="my-pickups.html">
+    <i class="fa-solid fa-box"></i> My Pickups
+  </a>
+
+  <a href="messages.html">
+    <i class="fa-solid fa-comments"></i> Messages
+  </a>
+
+  <a href="impact.html">
+   <i class="fa-solid fa-leaf"></i> My Impact
+  </a>
+
+  <a href="profile.html" class="active">
+    <i class="fa-solid fa-user"></i> My Profile
+  </a>
+</nav>
+  </aside>
+
+  <!-- PROFILE CONTENT -->
+  <main class="content">
+    <div class="profile-container">
+      <h2>My Profile</h2>
+
+      <div class="tabs">
+        <button id="profileTab" class="tab active">Profile</button>
+        <button id="passwordTab" class="tab">Password</button>
+      </div>
+
+      <form id="profileForm" class="card">
+        <input type="text" id="name" placeholder="Full Name" />
+        <input type="email" id="email" disabled />
+        <input type="text" id="location" placeholder="Location" />
+
+        <select id="role">
+          <option value="Volunteer">Volunteer</option>
+          <option value="NGO">NGO</option>
+          <option value="Admin">Admin</option>
+        </select>
+
+        <button type="submit" class="blue-btn">Update Profile</button>
+      </form>
+
+      <form id="passwordForm" class="card hidden">
+        <input type="password" id="currentPassword" placeholder="Current Password" />
+        <input type="password" id="newPassword" placeholder="New Password" />
+        <button type="submit" class="blue-btn">Change Password</button>
+      </form>
+    </div>
+  </main>
+
 </div>
 
 <script src="profile.js"></script>

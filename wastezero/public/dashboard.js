@@ -1,3 +1,4 @@
+
 // Redirect to login if not logged in
 if (!localStorage.getItem("token")) {
   window.location.href = "login.html";
@@ -20,5 +21,4 @@ window.onload = function() {
   document.querySelectorAll(".cards .card")[0].querySelector("strong").innerText = total;
   document.querySelectorAll(".cards .card")[1].querySelector("strong").innerText = scheduled;
 
-  // Remove all code related to showing recent pickups here
 };

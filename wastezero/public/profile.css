@@ -6,20 +6,19 @@
 }
 
 body {
+  margin: 0;
   background: #f5f7fa;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-/* Container */
+
+/* Profile Card */
 .profile-container {
-  width: 450px;
+  width: 536px;
   background: #ffffff;
   padding: 30px;
   border-radius: 16px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  margin: auto;
 }
 
 h2 {
@@ -71,12 +70,6 @@ input, select {
   border: 1px solid #ddd;
   outline: none;
   font-size: 14px;
-  transition: 0.3s ease;
-}
-
-input:focus, select:focus {
-  border-color: #1976d2;
-  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
 }
 
 .blue-btn {
@@ -89,9 +82,43 @@ input:focus, select:focus {
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.3s ease;
 }
 
-.blue-btn:hover {
-  background: #1565c0;
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: 240px;
+  background: #f5f7f6;
+  padding: 20px;
+  border-right: 1px solid #e0e0e0;
+}
+
+.sidebar nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  margin: 6px 0;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+/* Hover effect */
+.sidebar nav a:hover {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+/* Active page only (highlight on click/page) */
+.sidebar nav a.active {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 600;
 }

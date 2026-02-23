@@ -1,9 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Dashboard - WasteZero</title>
   <link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
 </head>
 <body>
 
@@ -13,31 +17,52 @@
   <aside class="sidebar">
     <div class="brand">♻ WasteZero</div>
 
-    <div class="user">
-      <div class="avatar">R</div>
-      <div>
-        <strong>Radhika</strong>
-        <small>radhikaraikar0607@gmail.com</small>
-      </div>
-    </div>
+   <div class="user">
+  <div class="avatar" id="userAvatar">U</div>
+  <div>
+    <strong id="userName">User</strong>
+    <small id="userEmail">email@example.com</small>
+  </div>
+</div>
 
-    <nav>
-      <a class="active" href="dashboard.html">Dashboard</a>
-      <a href="schedule-pickup.html">Schedule Pickup</a>
-      <a href="my-pickups.html">My Pickups</a>
-      <a href="messages.html">Messages</a>
-      <a href="impact.html">My Impact</a>
-      <a href="profile.html">My Profile</a>
-    </nav>
+   <nav>
+  <a href="dashboard.html">
+    <i class="fa-solid fa-chart-line"></i> Dashboard
+  </a>
 
-    <button class="logout">Sign Out</button>
+  <a href="schedule-pickup.html" class="active">
+    <i class="fa-solid fa-calendar-plus"></i> Schedule Pickup
+  </a>
+
+  <!-- <a href="my-pickups.html">
+    <i class="fa-solid fa-box"></i> My Pickups
+  </a> -->
+
+  <a href="messages.html">
+    <i class="fa-solid fa-comments"></i> Messages
+  </a>
+
+  <a href="impact.html">
+   <i class="fa-solid fa-leaf"></i> My Impact
+  </a>
+
+  <a href="profile.html">
+    <i class="fa-solid fa-user"></i> My Profile
+  </a>
+</nav>
+
+<button class="logout">
+  <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+</button>
+
   </aside>
 
   <!-- MAIN CONTENT -->
   <main class="content">
 
     <h1>Dashboard</h1>
-    <p>Welcome back, Radhika</p>
+    <p>Welcome back, <span id="welcomeName">User</span></p>
+
 
     
 
@@ -48,9 +73,9 @@
     <!-- STATS -->
     <div class="cards">
       <div class="card">Total Pickups<br><strong>1</strong></div>
-      <div class="card">Scheduled<br><strong>1</strong></div>
-      <div class="card">In Progress<br><strong>0</strong></div>
-      <div class="card">Completed<br><strong>0</strong></div>
+      <div class="card">Recycled Items<br><strong>1</strong></div>
+      <div class="card">CO2 Saved (Kg)<br><strong>0</strong></div>
+      <div class="card">Volunteer Hours<br><strong>0</strong></div>
     </div>
 
     <!-- <div class="box">

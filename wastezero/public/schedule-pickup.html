@@ -1,57 +1,145 @@
-<!-- <h1>Schedule a Pickup</h1>
-<form>
-  <select><option>Paper</option></select>
-  <input placeholder="Address">
-  <input type="date">
-  <input type="time">
-  <button>Schedule Pickup</button>
-</form> -->
-<link rel="stylesheet" href="schedule-pickup.css">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Schedule Pickup - WasteZero</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="schedule-pickup.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+</head>
 <body>
-  <div class="page">
-    <h1>Schedule a Pickup</h1>
 
-    <form id="pickupForm">
-      <select id="wasteType">
-        <option>Paper</option>
-        <option>Plastic</option>
-        <option>Metal</option>
-      </select>
+<div class="layout">
 
-      <input id="address" placeholder="Address" required>
-      <input id="date" type="date" required>
-      <input id="time" type="time" required>
+  <!-- SIDEBAR (same as dashboard/profile) -->
+  <aside class="sidebar">
+    <div class="brand">♻ WasteZero</div>
 
-      <button type="submit">Schedule Pickup</button>
-    </form>
+    <div class="user">
+      <div class="avatar" id="userAvatar">U</div>
+      <div>
+        <strong id="userName">User</strong>
+        <small id="userEmail">email@example.com</small>
+      </div>
+    </div>
+
+ <nav>
+  <a href="dashboard.html">
+    <i class="fa-solid fa-chart-line"></i> Dashboard
+  </a>
+
+  <a href="schedule-pickup.html" class="active">
+    <i class="fa-solid fa-calendar-plus"></i> Schedule Pickup
+  </a>
+
+  <!-- <a href="my-pickups.html">
+    <i class="fa-solid fa-box"></i> My Pickups
+  </a> -->
+
+  <a href="messages.html">
+    <i class="fa-solid fa-comments"></i> Messages
+  </a>
+
+  <a href="impact.html">
+   <i class="fa-solid fa-leaf"></i> My Impact
+  </a>
+
+  <a href="profile.html">
+    <i class="fa-solid fa-user"></i> My Profile
+  </a>
+</nav>
+
+  </aside>
+
+<!-- MAIN CONTENT -->
+<main class="content">
+  <div class="schedule-container">
+
+    <div class="header">
+      <h2>Schedule Pickup</h2>
+      <p>Request waste collection and manage your pickups</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" id="tabNew">Schedule New Pickup</button>
+      <button class="tab" id="tabHistory">Pickup History</button>
+    </div>
+
+    <!-- HISTORY CARD -->
+    <div class="card" id="historyCard" style="display:none;">
+      <h3>Your Pickup History</h3>
+      <div id="historyList">
+        <p>No pickups scheduled yet.</p>
+      </div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="card" id="step1">
+      <h3>Request Waste Collection</h3>
+      <p class="subtext">Fill in the details to schedule a pickup for your recyclable waste</p>
+
+      <form id="pickupForm">
+        <label>Address</label>
+        <input type="text" id="address" placeholder="Enter your street address" required>
+
+        <div class="row">
+          <div>
+            <label>City</label>
+            <input type="text" id="city" placeholder="Enter your city" required>
+          </div>
+
+          <div>
+            <label>Pickup Date</label>
+            <input type="date" id="date" required>
+          </div>
+        </div>
+
+        <label>Preferred Time Slot</label>
+        <select id="timeSlot" required>
+          <option value="">Select a time slot</option>
+          <option>9 AM - 12 PM</option>
+          <option>12 PM - 3 PM</option>
+          <option>3 PM - 6 PM</option>
+        </select>
+
+        <button type="button" class="next-btn">Next Step</button>
+      </form>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="card" id="step2" style="display:none;">
+      <h3>Request Waste Collection</h3>
+
+      <label>Waste Types</label>
+      <p class="subtext">Select the types of waste you want to recycle</p>
+
+      <form id="pickupForm2">
+        <div class="checkbox-grid">
+          <label class="check-item"><input type="checkbox" value="Plastic"> <span>Plastic</span></label>
+          <label class="check-item"><input type="checkbox" value="Glass"> <span>Glass</span></label>
+          <label class="check-item"><input type="checkbox" value="Electronic Waste"> <span>Electronic Waste</span></label>
+          <label class="check-item"><input type="checkbox" value="Paper"> <span>Paper</span></label>
+          <label class="check-item"><input type="checkbox" value="Metal"> <span>Metal</span></label>
+          <label class="check-item"><input type="checkbox" value="Organic Waste"> <span>Organic Waste</span></label>
+        </div>
+
+        <label>Additional Notes</label>
+        <textarea id="notes" placeholder="Any special instructions or information about your waste"></textarea>
+
+        <div class="btn-row">
+          <button type="button" class="prev-btn">Previous Step</button>
+          <button type="submit" class="submit-btn">Schedule Pickup</button>
+        </div>
+      </form>
+    </div>
+
   </div>
+</main>
+
+</div>
+
+<script src="schedule-pickup.js"></script>
 </body>
-
-<script>
-document.getElementById("pickupForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-
-  const pickupData = {
-    type: document.getElementById("wasteType").value,
-    address: document.getElementById("address").value,
-    date: document.getElementById("date").value,
-    time: document.getElementById("time").value,
-    status: "Scheduled"
-  };
-
-  // Get existing pickups from localStorage or empty array
-  let pickups = JSON.parse(localStorage.getItem("pickups")) || [];
-
-  // Add new pickup
-  pickups.push(pickupData);
-
-  // Save updated array
-  localStorage.setItem("pickups", JSON.stringify(pickups));
-
-  alert("Pickup Scheduled Successfully!");
-
-  // Redirect to dashboard
-  window.location.href = "dashboard.html";
-});
-</script>
+</html>

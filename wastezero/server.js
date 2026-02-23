@@ -4,9 +4,10 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
-// const nodemailer = require("nodemailer"); // ❌ disabled for local
+const User = require("./models/User"); // ✅ keep only this
 
 const app = express();
+
 
 /* ================= MIDDLEWARE ================= */
 app.use(cors());
@@ -23,27 +24,15 @@ mongoose
   });
 
 /* ================= USER MODEL ================= */
-const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  name: { type: String, default: "" },
-  location: { type: String, default: "" },
-  createdAt: { type: Date, default: Date.now }
-});
-
-const User = mongoose.model("User", userSchema);
-
-/* ================= EMAIL TRANSPORTER (COMMENTED) ================= */
-// const transporter = nodemailer.createTransport({
-//   service: "gmail",
-//   auth: {
-//     user: process.env.EMAIL_USER,
-//     pass: process.env.EMAIL_PASS
-//   }
+// const userSchema = new mongoose.Schema({
+//   email: { type: String, required: true, unique: true },
+//   password: { type: String, required: true },
+//   name: { type: String, default: "" },
+//   location: { type: String, default: "" },
+//   createdAt: { type: Date, default: Date.now }
 // });
 
-/* ================= OTP STORE (COMMENTED) ================= */
-// const otpStore = {};
+// const User = mongoose.model("User", userSchema);
 
 /* ================= REGISTER ================= */
 app.post("/api/register", async (req, res) => {
@@ -64,7 +53,7 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-/* ================= LOGIN (WITHOUT OTP - LOCAL TESTING) ================= */
+/* ================= LOGIN (WITHOUT OTP) ================= */
 app.post("/api/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -89,13 +78,6 @@ app.post("/api/login", async (req, res) => {
     res.status(500).json({ message: "Server error during login" });
   }
 });
-
-/* ================= VERIFY OTP (COMMENTED) ================= */
-/*
-app.post("/api/verify-otp", async (req, res) => {
-  // Disabled locally
-});
-*/
 
 /* ================= AUTH MIDDLEWARE ================= */
 const auth = (req, res, next) => {
