@@ -3,7 +3,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import Opportunities from "./pages/Opportunities";
-import AdminDashboard from "./pages/AdminDashboard";
+import AdminDashboard from "./Dashboard/AdminDashboard";
 import "./App.css";
 import DashboardLayout from "./layout/DashboardLayout";
 import OpportunityDetails from "./pages/OpportunityDetails";
@@ -13,6 +13,11 @@ import Notifications from "./pages/Notifications";
 import Messages from "./pages/Messages";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import SchedulePickup from "./pages/SchedulePickup";
+import AdminPickups from "./pages/AdminPickups";
+import NgoDashboard from "./Dashboard/NgoDashboard";
+import VolunteerDashboard from "./Dashboard/VolunteerDashboard";
+import RoleBasedDashboard from "./Dashboard/RoleBasedDashboard";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem("token");
@@ -26,7 +31,6 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 };
 
 function App() {
-
   return (
     <div>
       {/* Routes */}
@@ -45,9 +49,8 @@ function App() {
           }
         >
           {/* Default redirect */}
+          <Route path="dashboard"  element={<RoleBasedDashboard />} />
           <Route index element={<Navigate to="dashboard" />} />
-
-          <Route path="dashboard" element={<AdminDashboard />} />
 
           <Route path="profile" element={<Profile />} />
 
@@ -59,11 +62,43 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="ngoDashboard"
+            element={
+              <ProtectedRoute allowedRoles={["ngo"]}>
+                <NgoDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="adminDashboard"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="volunteerDashboard"
+            element={
+              <ProtectedRoute allowedRoles={["volunteer"]}>
+                <VolunteerDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="admin-pickups"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminPickups />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="opportunities/:id"
             element={
-              <ProtectedRoute allowedRoles={["ngo", "volunteer","admin"]}>
+              <ProtectedRoute allowedRoles={["ngo", "volunteer", "admin"]}>
                 <OpportunityDetails />
               </ProtectedRoute>
             }
@@ -73,6 +108,7 @@ function App() {
           <Route path="applicants/:id" element={<Applicants />} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="messages" element={<Messages />} />
+          <Route path="schedule" element={<SchedulePickup />} />
         </Route>
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />

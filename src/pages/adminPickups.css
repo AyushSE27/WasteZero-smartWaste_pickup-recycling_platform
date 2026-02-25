@@ -1,0 +1,141 @@
+/* ================= PAGE WRAPPER ================= */
+
+.admin-pickups {
+  padding: 40px;
+}
+
+.admin-pickups h2 {
+  margin-bottom: 25px;
+  font-weight: 600;
+  font-size: 22px;
+}
+
+/* ================= TABLE CONTAINER ================= */
+
+.pickup-table {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+/* ================= TABLE ROW ================= */
+
+.pickup-row {
+  display: grid;
+  grid-template-columns: 160px 220px 140px 120px 150px 120px;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+}
+
+.pickup-row:last-child {
+  border-bottom: none;
+}
+
+/* Header row */
+
+.pickup-row.header {
+  background: #f8f9fb;
+  font-weight: 600;
+  color: #444;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Hover effect */
+
+.pickup-row:not(.header):hover {
+  background: #fafcff;
+}
+
+/* ================= USER COLUMN ================= */
+
+.pickup-user-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.pickup-user-email {
+  font-size: 12px;
+  color: #888;
+}
+
+/* ================= STATUS BADGES ================= */
+
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  display: inline-block;
+}
+
+.status-badge.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-badge.assigned {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.status-badge.completed {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.cancelled {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* ================= STATUS DROPDOWN ================= */
+
+.pickup-row select {
+  padding: 6px 5px;
+  width: 6vw;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.pickup-row select:focus {
+  border-color: #2d89ef;
+}
+
+/* ================= DELETE BUTTON ================= */
+.div-delete{
+    margin-bottom: 25px;
+}
+.delete-btn {
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.delete-btn:hover {
+  background: #e63946;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 1200px) {
+  .pickup-row {
+    grid-template-columns: 120px 180px 120px 100px 130px 100px;
+    font-size: 12px;
+  }
+}
