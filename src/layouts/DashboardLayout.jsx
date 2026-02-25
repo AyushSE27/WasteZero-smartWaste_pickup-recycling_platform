@@ -46,14 +46,21 @@ const DashboardLayout = () => {
           />
         </div>
 
-        <nav>
+          <nav>
           <NavLink to="/dashboard">
             <FaTachometerAlt /> {!collapsed && "Dashboard"}
           </NavLink>
-
+          {role === "volunteer" && (
           <NavLink to="/schedule">
             <FaCalendarAlt /> {!collapsed && "Schedule Pickup"}
           </NavLink>
+          )}
+
+          {role==="admin" &&(
+           <NavLink to = "/admin-pickups">
+            <FaCalendarAlt/> {!collapsed && "Schedule Pickup"}
+           </NavLink>
+          )}
 
           <NavLink to="/opportunities">
             <FaLeaf /> {!collapsed && "Opportunities"}
@@ -80,7 +87,6 @@ const DashboardLayout = () => {
             <FaCog /> {!collapsed && "Settings"}
           </NavLink>
         </nav>
-
         {/* Dark Mode Toggle */}
         <div className="dark-toggle" onClick={() => setDarkMode(!darkMode)}>
           {darkMode ? <FaSun /> : <FaMoon />}
@@ -115,5 +121,6 @@ const DashboardLayout = () => {
     </div>
   );
 };
+
 
 export default DashboardLayout;
