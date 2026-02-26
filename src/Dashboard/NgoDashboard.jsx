@@ -1,222 +1,245 @@
-/* ================= NGO DASHBOARD WRAPPER ================= */
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import {
+  FaLeaf,
+  FaCheckCircle,
+  FaClipboardList,
+  FaTasks,
+} from "react-icons/fa";
+import "./ngoDashboard.css";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
 
-.ngo-container {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-}
+const NgoDashboard = () => {
+  const [stats, setStats] = useState({});
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
-/* ================= STATS GRID ================= */
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
 
-.ngo-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
+  const chartData =
+    stats.monthlyApplications?.map((item) => ({
+      month: monthNames[item._id - 1],
+      applications: item.count,
+    })) || [];
 
-.ngo-card {
-  padding: 20px;
-  border-radius: 12px;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-  transition: 0.3s ease;
-}
+  useEffect(() => {
+    fetchStats();
+  }, []);
 
-.ngo-card:hover {
-  transform: translateY(-4px);
-}
+  const fetchStats = async () => {
+    const res = await axios.get("http://localhost:5000/api/dashboard/stats", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setStats(res.data);
+  };
+  const updateStatus = async (applicationId, status) => {
+    try {
+      await axios.put(
+        `http://localhost:5000/api/applications/${applicationId}/status`,
+        { status },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
 
-.ngo-card svg {
-  font-size: 20px;
-}
+      fetchStats(); // refresh dashboard
+    } catch (error) {
+      console.log("Error updating status");
+    }
+  };
 
-/* Colors */
-.ngo-card.blue {
-  background: #2d89ef;
-}
+  const handleDeleteOpportunity = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/opportunities/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-.ngo-card.green {
-  background: #1e7e34;
-}
+      fetchStats(); // refresh dashboard
+    } catch (error) {
+      console.log("Error deleting opportunity");
+    }
+  };
 
-.ngo-card.yellow {
-  background: #f4b400;
-}
+  return (
+    <div className="ngo-container">
+      {/* Top Stats */}
+      <div className="ngo-stats-grid">
+        <div className="ngo-card blue">
+          <FaLeaf />
+          <h4>Total Opportunities</h4>
+          <h2>{stats.totalOpportunities || 0}</h2>
+        </div>
 
-.ngo-card.teal {
-  background: #17a2b8;
-}
+        <div className="ngo-card green">
+          <FaCheckCircle />
+          <h4>Active Opportunities</h4>
+          <h2>{stats.activeOpportunities || 0}</h2>
+        </div>
 
-/* ================= TABLE SECTION ================= */
+        <div className="ngo-card yellow">
+          <FaClipboardList />
+          <h4>Total Applications</h4>
+          <h2>{stats.totalApplications || 0}</h2>
+        </div>
 
-.ngo-table-section {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-}
+        <div className="ngo-card teal">
+          <FaTasks />
+          <h4>Completed Projects</h4>
+          <h2>{stats.completedProjects || 0}</h2>
+        </div>
+      </div>
+      <div className="ngo-table-section">
+        <div className="ngo-table-header">
+          <h3>Manage Opportunities</h3>
+          <button
+            className="create-btn-small"
+            onClick={() => navigate("/opportunities")}
+          >
+            {" "}
+            + Create New{" "}
+          </button>
+        </div>{" "}
+        {/* TABLE HEADER */}
+        <div className="ngo-table-row header">
+          <div>Opportunity</div>
+          <div>Date</div>
+          <div>Applications</div>
+          <div>Status</div>
+          <div className="text-right">Actions</div>
+        </div>
+        {/* DATA ROWS */}
+        {stats.opportunities?.length === 0 ? (
+          <div className="empty-state">No opportunities found.</div>
+        ) : (
+          stats.opportunities?.map((op) => (
+            <div key={op._id} className="ngo-table-row">
+              <div>{op.title}</div>
+              <div>
+                {" "}
+                {op.date
+                  ? new Date(op.date).toLocaleDateString()
+                  : "Not specified"}{" "}
+              </div>
+              <div>{op.applicationCount || 0}</div>
+              <div>
+                <span className={`status ${op.status}`}>{op.status}</span>
+              </div>
+              <div className="action-buttons">
+                <button
+                  className="edit-btn"
+                  onClick={() => navigate(`/opportunities/${op._id}`)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="view-btn"
+                  onClick={() => navigate(`/opportunities/${op._id}`)}
+                >
+                  View
+                </button>
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDeleteOpportunity(op._id)}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+      {/* ===== RECENT APPLICATIONS ===== */}
+      <div className="ngo-table-section">
+        <h3>Recent Applications</h3>
+        {/* HEADER */}
+        <div className="ngo-table-row header">
+          <div>Opportunity</div>
+          <div>Volunteer</div>
+          <div>Applied Date</div>
+          <div>Status</div>
+          <div className="text-right">Actions</div>
+        </div>
+        {/* DATA ROWS */}
+        {stats.recentApplications?.length === 0 ? (
+          <div className="empty-state">No opportunities found.</div>
+        ) : (
+          stats.recentApplications?.map((app) => (
+            <div key={app._id} className="ngo-table-row">
+              <div>{app.opportunity_id?.title}</div>
+              <div>{app.volunteer_id?.name}</div>
+              <div>{new Date(app.createdAt).toLocaleDateString()}</div>
+              <div>
+                {" "}
+                <span className={`status ${app.status}`}>{app.status}</span>
+              </div>
+              <div className="action-buttons">
+                {" "}
+                {app.status === "pending" ? (
+                  <>
+                    <button
+                      className="accept-btn"
+                      onClick={() => updateStatus(app._id, "accepted")}
+                    >
+                      {" "}
+                      Accept{" "}
+                    </button>
+                    <button
+                      className="reject-btn"
+                      onClick={() => updateStatus(app._id, "rejected")}
+                    >
+                      {" "}
+                      Reject{" "}
+                    </button>
+                  </>
+                ) : (
+                  <span className="no-action">—</span>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
 
-.ngo-table-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
+      {/* Chart */}
+      <div className="ngo-chart">
+        <h3>Monthly Applications</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="month" />
+            <YAxis />
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey="applications"
+              stroke="#2d89ef"
+              strokeWidth={3}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+};
 
-.create-btn-small {
-  background: #28a745;
-  color: white;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-}
-
-.create-btn-small:hover {
-  background: #218838;
-}
-
-/* Table grid */
-
-.ngo-table-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
-  align-items: center;
-  padding: 14px 0;
-  border-bottom: 1px solid #f1f1f1;
-  font-size: 14px;
-}
-
-.ngo-table-row.header {
-  font-weight: 600;
-  color: #666;
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.ngo-table-row:last-child {
-  border-bottom: none;
-}
-
-.ngo-table-row:not(.header):hover {
-  background: #fafafa;
-}
-
-/* Status badges */
-
-.status {
-  padding: 5px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-.status.pending {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.status.accepted {
-  background: #d4edda;
-  color: #155724;
-}
-
-.status.rejected {
-  background: #f8d7da;
-  color: #721c24;
-}
-
-.status.open {
-  background: #d4edda;
-  color: #155724;
-}
-
-.status.closed {
-  background: #e2e3e5;
-  color: #383d41;
-}
-
-/* Action buttons */
-
-.action-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.accept-btn,
-.reject-btn,
-.edit-btn,
-.view-btn,
-.delete-btn {
-  padding: 5px 10px;
-  border-radius: 6px;
-  font-size: 13px;
-  cursor: pointer;
-  background: white;
-}
-
-.accept-btn {
-  border: 1px solid #28a745;
-  color: #28a745;
-}
-
-.reject-btn {
-  border: 1px solid #dc3545;
-  color: #dc3545;
-}
-
-.edit-btn {
-  border: 1px solid #007bff;
-  color: #007bff;
-}
-
-.view-btn {
-  border: 1px solid #17a2b8;
-  color: #17a2b8;
-}
-
-.delete-btn {
-  border: 1px solid #dc3545;
-  color: #dc3545;
-}
-
-.accept-btn:hover {
-  background: #28a745;
-  color: white;
-}
-
-.reject-btn:hover,
-.delete-btn:hover {
-  background: #dc3545;
-  color: white;
-}
-
-.edit-btn:hover {
-  background: #007bff;
-  color: white;
-}
-
-.view-btn:hover {
-  background: #17a2b8;
-  color: white;
-}
-
-/* ================= CHART ================= */
-
-.ngo-chart {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-}
-.empty-state {
-  padding: 20px;
-  text-align: center;
-  color: #888;
-  font-size: 14px;
-}
+export default NgoDashboard;
