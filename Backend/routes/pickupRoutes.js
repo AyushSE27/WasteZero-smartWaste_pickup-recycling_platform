@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Pickup = require("../models/Pickup");
 const { protect } = require("../middleware/authMiddleware");
+const { logActivity } = require("../utils/activityLogger");
 
 /*
 ================================
@@ -29,6 +30,15 @@ const pickup = await Pickup.create({
   wasteTypes,
   notes,
 });
+
+    await logActivity({
+      type: "pickup_created",
+      description: "New waste pickup request created",
+      userId: req.user._id,
+      userName: req.user.name,
+      requestId: newPickupId,
+      metadata: { city, wasteTypes },
+    });
 
     res.status(201).json(pickup);
   } catch (error) {
@@ -96,6 +106,26 @@ router.put("/:id/status", protect, async (req, res) => {
 
     pickup.status = status;
     await pickup.save();
+
+    const type =
+      status === "completed"
+        ? "pickup_completed"
+        : status === "assigned"
+          ? "pickup_assigned"
+          : "pickup_status_updated";
+
+    await logActivity({
+      type,
+      description:
+        status === "completed"
+          ? "Pickup completed"
+          : status === "assigned"
+            ? "Pickup assigned to an agent"
+            : "Pickup status updated",
+      userId: pickup.user_id,
+      requestId: pickup.pickupId,
+      metadata: { status, updatedByRole: req.user.role, updatedBy: req.user._id },
+    });
 
     res.json(pickup);
   } catch (error) {

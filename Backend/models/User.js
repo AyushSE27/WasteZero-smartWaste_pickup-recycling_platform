@@ -12,6 +12,10 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    phone: {
+      type: String,
+      default: "",
+    },
     password: {
       type: String,
       required: true,
@@ -20,6 +24,18 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["volunteer", "ngo", "admin"],
       default: "volunteer",
+    },
+    accountStatus: {
+      type: String,
+      enum: ["active", "suspended", "blocked"],
+      default: "active",
+      index: true,
+    },
+    // Backwards-compatible flag used by older admin UI
+    isBlocked: {
+      type: Boolean,
+      default: false,
+      index: true,
     },
     skills: {
       type: [String],

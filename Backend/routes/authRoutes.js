@@ -4,6 +4,7 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../utils/sendEmail");
 const crypto = require("crypto");
+const { logActivity } = require("../utils/activityLogger");
 /*
 ----------------------------------
 1️⃣ Register
@@ -11,7 +12,7 @@ const crypto = require("crypto");
 */
 router.post("/register", async (req, res) => {
   try {
-    const { name, email, password, role, location } = req.body;
+    const { name, email, password, role, location, phone } = req.body;
 
     const userExists = await User.findOne({ email });
     if (userExists)
@@ -23,10 +24,19 @@ router.post("/register", async (req, res) => {
       password,
       role,
       location,
+      phone,
     });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
+    });
+
+    await logActivity({
+      type: "user_registered",
+      description: "New user registered",
+      userId: user._id,
+      userName: user.name,
+      metadata: { role: user.role },
     });
 
     res.status(201).json({
@@ -57,6 +67,13 @@ router.post("/login", async (req, res) => {
 
     if (!user || !(await user.matchPassword(password))) {
       return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    if (user.accountStatus === "blocked" || user.isBlocked) {
+      return res.status(403).json({ message: "Account is blocked" });
+    }
+    if (user.accountStatus === "suspended") {
+      return res.status(403).json({ message: "Account is suspended" });
     }
 
     // Generate OTP
@@ -95,6 +112,13 @@ router.post("/verify-otp", async (req, res) => {
 
     if (!user || user.otp !== otp || user.otpExpiry < Date.now()) {
       return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+
+    if (user.accountStatus === "blocked" || user.isBlocked) {
+      return res.status(403).json({ message: "Account is blocked" });
+    }
+    if (user.accountStatus === "suspended") {
+      return res.status(403).json({ message: "Account is suspended" });
     }
 
     user.otp = undefined;
