@@ -4,9 +4,11 @@ import {
   createOpportunity,
   updateOpportunity,
   deleteOpportunity,
+  deleteAdminOpportunity,
 } from "../services/opportunityService";
 import OpportunityForm from "../components/OpportunityForm";
 import { useNavigate } from "react-router-dom";
+import { FaTrash } from "react-icons/fa";
 // import axios from "axios";
 import "./opportunities.css";
 
@@ -16,6 +18,10 @@ const Opportunities = () => {
   const [showForm, setShowForm] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [deleteTitle, setDeleteTitle] = useState("");
+  const [deleteMode, setDeleteMode] = useState("owner");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [feedback, setFeedback] = useState({ type: "", text: "" });
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
@@ -56,13 +62,34 @@ const Opportunities = () => {
 
   /* ================= DELETE ================= */
   const confirmDelete = async () => {
+    if (!deleteId) return;
+
+    setIsDeleting(true);
+    setFeedback({ type: "", text: "" });
+
     try {
-      await deleteOpportunity(deleteId, token);
+      if (deleteMode === "admin") {
+        await deleteAdminOpportunity(deleteId, token);
+      } else {
+        await deleteOpportunity(deleteId, token);
+      }
+
+      setOpportunities((prev) => prev.filter((op) => op._id !== deleteId));
+      setFeedback({
+        type: "success",
+        text: "Opportunity deleted successfully.",
+      });
       setShowDeleteModal(false);
       setDeleteId(null);
-      fetchData();
+      setDeleteTitle("");
+      setDeleteMode("owner");
     } catch (error) {
-      console.log("Error deleting opportunity");
+      setFeedback({
+        type: "error",
+        text: error.response?.data?.message || "Error deleting opportunity",
+      });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -86,6 +113,16 @@ const Opportunities = () => {
 
   return (
     <div className="opportunities-page">
+      {feedback.text && (
+        <div
+          className={
+            feedback.type === "success" ? "page-message success" : "page-message error"
+          }
+        >
+          {feedback.text}
+        </div>
+      )}
+
       <div className="op-header">
         <div>
           <h2>Opportunities</h2>
@@ -149,6 +186,23 @@ const Opportunities = () => {
       <div className="opportunities-grid">
         {filteredOpportunities.map((op) => (
           <div key={op._id} className="opportunity-card">
+            {role === "admin" && (
+              <button
+                type="button"
+                className="admin-delete-btn"
+                aria-label={`Delete ${op.title}`}
+                disabled={isDeleting && deleteId === op._id}
+                onClick={() => {
+                  setDeleteId(op._id);
+                  setDeleteTitle(op.title);
+                  setDeleteMode("admin");
+                  setShowDeleteModal(true);
+                  setFeedback({ type: "", text: "" });
+                }}
+              >
+                <FaTrash />
+              </button>
+            )}
             {/* IMAGE */}
             {op.image ? (
               <img
@@ -226,7 +280,10 @@ const Opportunities = () => {
                   className="delete-btn"
                   onClick={() => {
                     setDeleteId(op._id);
+                    setDeleteTitle(op.title);
+                    setDeleteMode("owner");
                     setShowDeleteModal(true);
+                    setFeedback({ type: "", text: "" });
                   }}
                 >
                   Delete
@@ -241,20 +298,30 @@ const Opportunities = () => {
           <div className="modal-box">
             <h3>Are you sure?</h3>
             <p>
-              This action cannot be undone. This will permanently delete the
-              opportunity.
+              Are you sure you want to delete this opportunity?
+            </p>
+            <p className="modal-subtext">
+              {deleteTitle
+                ? `"${deleteTitle}" will be permanently removed.`
+                : "This action cannot be undone."}
             </p>
 
             <div className="modal-actions">
               <button
                 className="secondary-btn"
-                onClick={() => setShowDeleteModal(false)}
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeleteId(null);
+                  setDeleteTitle("");
+                  setDeleteMode("owner");
+                }}
+                disabled={isDeleting}
               >
                 Cancel
               </button>
 
-              <button className="delete-btn" onClick={confirmDelete}>
-                Delete
+              <button className="delete-btn" onClick={confirmDelete} disabled={isDeleting}>
+                {isDeleting ? "Deleting..." : "Confirm Delete"}
               </button>
             </div>
           </div>

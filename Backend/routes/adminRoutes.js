@@ -3,6 +3,8 @@ const router = express.Router();
 const User = require("../models/User");
 const Pickup = require("../models/Pickup");
 const ActivityLog = require("../models/ActivityLog");
+const Opportunity = require("../models/Opportunity");
+const Application = require("../models/Application");
 const { protect, requireAdmin } = require("../middleware/authMiddleware");
 const { logActivity } = require("../utils/activityLogger");
 
@@ -301,6 +303,40 @@ router.put("/users/:id/block", protect, requireAdmin, async (req, res) => {
     });
 
     res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+/*
+===============================
+DELETE Opportunity (Admin Only)
+DELETE /api/admin/opportunities/:id
+===============================
+*/
+router.delete("/opportunities/:id", protect, requireAdmin, async (req, res) => {
+  try {
+    const opportunity = await Opportunity.findById(req.params.id);
+
+    if (!opportunity) {
+      return res.status(404).json({ message: "Opportunity not found" });
+    }
+
+    await Application.deleteMany({
+      opportunity_id: opportunity._id,
+    });
+
+    await opportunity.deleteOne();
+
+    await logActivity({
+      type: "opportunity_deleted",
+      description: "Opportunity deleted by admin",
+      userId: req.user._id,
+      userName: req.user.name,
+      metadata: { opportunityId: req.params.id, title: opportunity.title },
+    });
+
+    res.json({ message: "Opportunity deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }

@@ -29,5 +29,10 @@ export const deleteOpportunity = (id, token) =>
   axios.delete(`${API}/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
+
+export const deleteAdminOpportunity = (id, token) =>
+  axios.delete(`http://localhost:5000/api/admin/opportunities/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 export const getSingleOpportunity = (id) =>
   axios.get(`${API}/${id}`);
