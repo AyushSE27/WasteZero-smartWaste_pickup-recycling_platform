@@ -3,13 +3,14 @@ const router = express.Router();
 const { protect } = require("../middleware/authMiddleware");
 const Opportunity = require("../models/Opportunity");
 const Application = require("../models/Application");
+const User = require("../models/User");
+const Pickup = require("../models/Pickup");
 
 router.get("/stats", protect, async (req, res) => {
   try {
     let stats = {};
 
-   if (req.user.role === "ngo") {
-
+    if (req.user.role === "ngo") {
       const totalOpportunities = await Opportunity.countDocuments({
         ngo_id: req.user._id,
       });
@@ -28,7 +29,7 @@ router.get("/stats", protect, async (req, res) => {
         ngo_id: req.user._id,
       }).select("_id");
 
-      const opportunityIds = opportunities.map(op => op._id);
+      const opportunityIds = opportunities.map((op) => op._id);
 
       const totalApplications = await Application.countDocuments({
         opportunity_id: { $in: opportunityIds },
@@ -64,7 +65,32 @@ router.get("/stats", protect, async (req, res) => {
             count: { $sum: 1 },
           },
         },
-        { $sort: { "_id": 1 } },
+        { $sort: { _id: 1 } },
+      ]);
+
+      const opportunitiesWithCount = await Opportunity.aggregate([
+        { $match: { ngo_id: req.user._id } },
+        {
+          $lookup: {
+            from: "applications",
+            localField: "_id",
+            foreignField: "opportunity_id",
+            as: "applications",
+          },
+        },
+        {
+          $addFields: {
+            applicationCount: { $size: "$applications" },
+          },
+        },
+        {
+          $project: {
+            title: 1,
+            date: 1,
+            status: 1,
+            applicationCount: 1,
+          },
+        },
       ]);
 
       stats = {
@@ -74,6 +100,7 @@ router.get("/stats", protect, async (req, res) => {
         completedProjects,
         recentApplications,
         monthlyApplications,
+        opportunities: opportunitiesWithCount,
       };
     } else if (req.user.role === "volunteer") {
       const totalOpen = await Opportunity.countDocuments({
@@ -100,9 +127,22 @@ router.get("/stats", protect, async (req, res) => {
         accepted,
         pending,
       };
-    } else if (req.user.role === "admin") {
+    }else if (req.user.role === "admin") {
+      const totalUsers = await User.countDocuments();
+      const totalOpportunities = await Opportunity.countDocuments();
+      const completedPickups = await Pickup.countDocuments({
+        status: "completed",
+      });
+      const pendingPickups = await Pickup.countDocuments({ status: "pending" });
       const total = await Opportunity.countDocuments();
-      stats = { total };
+
+      stats = {
+        total,
+        totalUsers,
+        totalOpportunities,
+        completedPickups,
+        pendingPickups,
+      };
     }
 
     res.json(stats);
@@ -110,7 +150,5 @@ router.get("/stats", protect, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-
-
 
 module.exports = router;

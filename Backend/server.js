@@ -32,6 +32,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/pickups", require("./routes/pickupRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 
+
 /* ================= SOCKET.IO ================= */
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
@@ -55,5 +56,4 @@ const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-
 });
