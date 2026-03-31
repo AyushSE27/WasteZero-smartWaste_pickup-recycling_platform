@@ -121,9 +121,3 @@ You will also need a running instance of **MongoDB** (either locally installed o
 
 ---
 
-## 🤝 Contributing
-Contributions are welcome! If you're contributing code:
-1. Create a descriptive branch (e.g. `feature/add-dark-mode`).
-2. Follow clean code and commenting standards.
-3. Test locally against the backend.
-4. Open a Pull Request!
