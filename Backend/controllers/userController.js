@@ -6,22 +6,27 @@ const Application = require("../models/Application");
 const Opportunity = require("../models/Opportunity");
 const Message = require("../models/Message");
 const Notification = require("../models/Notification");
+const { getNotificationPreferences } = require("../utils/notificationPreferences");
 
-const getSettingsPayload = (user) => ({
-  _id: user._id,
-  name: user.name,
-  email: user.email,
-  phone: user.phone || "",
-  role: user.role,
-  accountStatus: user.accountStatus || "active",
-  avatar: user.avatar || "",
-  defaultPickupLocation: user.defaultPickupLocation || user.location || "",
-  preferences: {
-    emailNotifications: user.preferences?.emailNotifications ?? true,
-    pickupUpdates: user.preferences?.pickupUpdates ?? true,
-    reminderAlerts: user.preferences?.reminderAlerts ?? true,
-  },
-});
+const getSettingsPayload = (user) => {
+  const notificationPreferences = getNotificationPreferences(user);
+
+  return {
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    phone: user.phone || "",
+    role: user.role,
+    accountStatus: user.accountStatus || "active",
+    avatar: user.avatar || "",
+    defaultPickupLocation: user.defaultPickupLocation || user.location || "",
+    preferences: {
+      emailNotifications: notificationPreferences.email,
+      pickupUpdates: notificationPreferences.pickupUpdates,
+      reminderAlerts: notificationPreferences.reminders,
+    },
+  };
+};
 
 exports.getUserSettings = async (req, res) => {
   try {
@@ -53,6 +58,26 @@ exports.updatePreferences = async (req, res) => {
         req.body.pickupUpdates ?? user.preferences?.pickupUpdates ?? true,
       reminderAlerts:
         req.body.reminderAlerts ?? user.preferences?.reminderAlerts ?? true,
+    };
+    user.notifications = {
+      ...user.notifications,
+      email:
+        req.body.emailNotifications ??
+        req.body.email ??
+        user.notifications?.email ??
+        user.preferences?.emailNotifications ??
+        true,
+      pickupUpdates:
+        req.body.pickupUpdates ??
+        user.notifications?.pickupUpdates ??
+        user.preferences?.pickupUpdates ??
+        true,
+      reminders:
+        req.body.reminderAlerts ??
+        req.body.reminders ??
+        user.notifications?.reminders ??
+        user.preferences?.reminderAlerts ??
+        true,
     };
 
     await user.save();

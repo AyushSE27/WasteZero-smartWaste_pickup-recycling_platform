@@ -12,6 +12,7 @@ const Profile = () => {
   const [profileData, setProfileData] = useState({
     name: "",
     email: "",
+    phone: "",
     location: "",
     skills: "",
   });
@@ -54,9 +55,11 @@ const Profile = () => {
   const fetchProfile = async () => {
     try {
       const res = await getProfile(token);
+      localStorage.setItem("wastezero-user-profile", JSON.stringify(res.data));
       setProfileData({
         name: res.data.name || "",
         email: res.data.email || "",
+        phone: res.data.phone || "",
         location: res.data.location || "",
         skills: res.data.skills?.join(", ") || "",
       });
@@ -67,18 +70,44 @@ const Profile = () => {
 
   /* ================= Update Profile ================= */
   const handleProfileChange = (e) => {
-    setProfileData({ ...profileData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    const nextValue =
+      name === "phone" ? value.replace(/\D/g, "").slice(0, 12) : value;
+
+    setProfileData({ ...profileData, [name]: nextValue });
   };
 
   const handleProfileSubmit = async () => {
+    if (profileData.phone && (profileData.phone.length < 10 || profileData.phone.length > 12)) {
+      setMessage("Phone number must be 10 to 12 digits.");
+      return;
+    }
+
     try {
-      await updateProfile(
+      const response = await updateProfile(
         {
           name: profileData.name,
+          email: profileData.email,
+          phone: profileData.phone,
           location: profileData.location,
           skills: profileData.skills.split(",").map((s) => s.trim()),
         },
         token
+      );
+
+      localStorage.setItem("wastezero-user-profile", JSON.stringify(response.data));
+      setProfileData((current) => ({
+        ...current,
+        name: response.data.name || current.name,
+        email: response.data.email || current.email,
+        phone: response.data.phone || "",
+        location: response.data.location || current.location,
+      }));
+      console.log("Updated user:", response.data);
+      window.dispatchEvent(
+        new CustomEvent("wastezero-profile-updated", {
+          detail: response.data,
+        }),
       );
 
       setMessage("Profile updated successfully");
@@ -166,10 +195,25 @@ const Profile = () => {
               <label>Email</label>
               <input
                 type="email"
+                name="email"
                 value={profileData.email}
                 disabled
               />
               <small>This email is used for notifications.</small>
+            </div>
+
+            <div className="form-group">
+              <label>Phone</label>
+              <input
+                type="tel"
+                name="phone"
+                value={profileData.phone}
+                onChange={handleProfileChange}
+                inputMode="numeric"
+                maxLength={12}
+                placeholder="Enter your phone number"
+              />
+              <small>Optional. Use 10 to 12 digits.</small>
             </div>
 
             <div className="form-group">

@@ -152,7 +152,16 @@ GET Logged In User Profile
 ====================================
 */
 router.get("/profile", protect, async (req, res) => {
-  res.json(req.user);
+  res.json({
+    _id: req.user._id,
+    name: req.user.name,
+    email: req.user.email,
+    phone: req.user.phone || "",
+    role: req.user.role,
+    location: req.user.location || "",
+    skills: req.user.skills || [],
+    bio: req.user.bio || "",
+  });
 });
 
 /*
@@ -168,7 +177,14 @@ router.put("/profile", protect, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    const normalizedPhone =
+      typeof req.body.phone === "string"
+        ? req.body.phone.replace(/\D/g, "").slice(0, 12)
+        : user.phone || "";
+
     user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    user.phone = normalizedPhone;
     user.location = req.body.location || user.location;
     user.bio = req.body.bio || user.bio;
 
@@ -178,6 +194,7 @@ router.put("/profile", protect, async (req, res) => {
       _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
+      phone: updatedUser.phone || "",
       role: updatedUser.role,
       location: updatedUser.location,
       bio: updatedUser.bio,

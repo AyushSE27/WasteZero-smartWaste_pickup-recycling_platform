@@ -69,6 +69,20 @@ const userSchema = new mongoose.Schema(
         default: true,
       },
     },
+    notifications: {
+      email: {
+        type: Boolean,
+        default: true,
+      },
+      pickupUpdates: {
+        type: Boolean,
+        default: true,
+      },
+      reminders: {
+        type: Boolean,
+        default: true,
+      },
+    },
     otp: {
       type: String,
     },

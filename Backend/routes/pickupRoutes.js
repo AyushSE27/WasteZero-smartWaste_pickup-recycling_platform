@@ -1,8 +1,40 @@
 const express = require("express");
 const router = express.Router();
 const Pickup = require("../models/Pickup");
+const User = require("../models/User");
+const Notification = require("../models/Notification");
 const { protect } = require("../middleware/authMiddleware");
 const { logActivity } = require("../utils/activityLogger");
+const { getNotificationPreferences } = require("../utils/notificationPreferences");
+
+const createNotificationEntry = async ({
+  user,
+  type,
+  message,
+  requestId,
+  metadata,
+}) => {
+  try {
+    await Notification.create({
+      user_id: user._id,
+      message,
+    });
+
+    await logActivity({
+      type,
+      description: message,
+      userId: user._id,
+      userName: user.name,
+      requestId,
+      metadata: {
+        ...(metadata || {}),
+        notification: true,
+      },
+    });
+  } catch (_error) {
+    // Notification failures must never block pickup flows
+  }
+};
 
 /*
 ================================
@@ -12,24 +44,25 @@ CREATE PICKUP
 router.post("/", protect, async (req, res) => {
   try {
     const { address, city, date, timeSlot, wasteTypes, notes } = req.body;
+    const currentUser = await User.findById(req.user._id).select("name preferences notifications");
 
     // Generate sequential pickup number
-const count = await Pickup.countDocuments();
-const year = new Date().getFullYear();
-const pickupNumber = String(count + 1).padStart(4, "0");
+    const count = await Pickup.countDocuments();
+    const year = new Date().getFullYear();
+    const pickupNumber = String(count + 1).padStart(4, "0");
 
-const newPickupId = `WZP-${year}-${pickupNumber}`;
+    const newPickupId = `WZP-${year}-${pickupNumber}`;
 
-const pickup = await Pickup.create({
-  pickupId: newPickupId,
-  user_id: req.user._id,
-  address,
-  city,
-  date,
-  timeSlot,
-  wasteTypes,
-  notes,
-});
+    const pickup = await Pickup.create({
+      pickupId: newPickupId,
+      user_id: req.user._id,
+      address,
+      city,
+      date,
+      timeSlot,
+      wasteTypes,
+      notes,
+    });
 
     await logActivity({
       type: "pickup_created",
@@ -39,6 +72,17 @@ const pickup = await Pickup.create({
       requestId: newPickupId,
       metadata: { city, wasteTypes },
     });
+
+    const notificationPreferences = getNotificationPreferences(currentUser);
+    if (notificationPreferences.reminders) {
+      await createNotificationEntry({
+        user: currentUser || req.user,
+        type: "pickup_created",
+        message: `Pickup request ${newPickupId} created successfully.`,
+        requestId: newPickupId,
+        metadata: { city, wasteTypes },
+      });
+    }
 
     res.status(201).json(pickup);
   } catch (error) {
@@ -104,6 +148,10 @@ router.put("/:id/status", protect, async (req, res) => {
     if (!pickup)
       return res.status(404).json({ message: "Pickup not found" });
 
+    const pickupUser = await User.findById(pickup.user_id).select(
+      "name preferences notifications",
+    );
+
     pickup.status = status;
     await pickup.save();
 
@@ -126,6 +174,24 @@ router.put("/:id/status", protect, async (req, res) => {
       requestId: pickup.pickupId,
       metadata: { status, updatedByRole: req.user.role, updatedBy: req.user._id },
     });
+
+    const notificationPreferences = getNotificationPreferences(pickupUser);
+    if (notificationPreferences.pickupUpdates) {
+      const notificationMessage =
+        status === "completed"
+          ? `Pickup ${pickup.pickupId} has been completed.`
+          : status === "assigned"
+            ? `Pickup ${pickup.pickupId} has been assigned.`
+            : `Pickup ${pickup.pickupId} status updated to ${status}.`;
+
+      await createNotificationEntry({
+        user: pickupUser || { _id: pickup.user_id, name: "" },
+        type,
+        message: notificationMessage,
+        requestId: pickup.pickupId,
+        metadata: { status, updatedByRole: req.user.role, updatedBy: req.user._id },
+      });
+    }
 
     res.json(pickup);
   } catch (error) {

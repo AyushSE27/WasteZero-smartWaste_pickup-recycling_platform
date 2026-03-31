@@ -14,6 +14,7 @@ import ToggleSwitch from "../components/settings/ToggleSwitch";
 import ActionButton from "../components/settings/ActionButton";
 import ConfirmationModal from "../components/settings/ConfirmationModal";
 import AvatarUpload from "../components/settings/AvatarUpload";
+import { getProfile } from "../services/authService";
 import {
   deleteUserAccount,
   exportUserData,
@@ -76,11 +77,18 @@ const createCsvContent = (rows) => {
 const Settings = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const cachedProfile = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("wastezero-user-profile") || "null");
+    } catch (_error) {
+      return null;
+    }
+  })();
 
   const [settingsData, setSettingsData] = useState({
-    name: "",
-    email: "",
-    phone: "",
+    name: cachedProfile?.name || "",
+    email: cachedProfile?.email || "",
+    phone: cachedProfile?.phone || "",
     role: "user",
     accountStatus: "active",
     avatar: "",
@@ -105,24 +113,76 @@ const Settings = () => {
 
   const [avatarPreviewUrl, setAvatarPreviewUrl] = useState("");
 
-  useEffect(() => {
-    const loadSettings = async () => {
-      try {
-        const response = await getUserSettings(token);
-        setSettingsData(response.data);
-        setLocationInput(response.data.defaultPickupLocation || "");
-      } catch (error) {
-        setFeedback({
-          type: "error",
-          text: error.response?.data?.message || "Unable to load your settings right now.",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+  const loadSettings = async () => {
+    try {
+      const [settingsResponse, profileResponse] = await Promise.all([
+        getUserSettings(token),
+        getProfile(token),
+      ]);
+      const mergedUser = {
+        ...settingsResponse.data,
+        phone:
+          cachedProfile?.phone ??
+          profileResponse.data?.phone ??
+          settingsResponse.data?.phone ??
+          "",
+        email:
+          cachedProfile?.email ??
+          profileResponse.data?.email ??
+          settingsResponse.data?.email ??
+          "",
+        name:
+          cachedProfile?.name ??
+          profileResponse.data?.name ??
+          settingsResponse.data?.name ??
+          "",
+      };
 
+      localStorage.setItem("wastezero-user-profile", JSON.stringify(mergedUser));
+      console.log("User in Settings:", mergedUser);
+      setSettingsData(mergedUser);
+      setLocationInput(mergedUser.defaultPickupLocation || "");
+    } catch (error) {
+      setFeedback({
+        type: "error",
+        text: error.response?.data?.message || "Unable to load your settings right now.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     loadSettings();
   }, [token]);
+
+  useEffect(() => {
+    const handleProfileUpdated = (event) => {
+      const updatedUser = event?.detail || {};
+
+      setSettingsData((current) => ({
+        ...current,
+        name: updatedUser.name ?? current.name,
+        email: updatedUser.email ?? current.email,
+        phone: updatedUser.phone ?? current.phone,
+      }));
+      localStorage.setItem(
+        "wastezero-user-profile",
+        JSON.stringify({
+          ...cachedProfile,
+          ...updatedUser,
+        }),
+      );
+
+      loadSettings();
+    };
+
+    window.addEventListener("wastezero-profile-updated", handleProfileUpdated);
+
+    return () => {
+      window.removeEventListener("wastezero-profile-updated", handleProfileUpdated);
+    };
+  }, []);
 
   useEffect(() => {
     if (selectedAvatarFile) {
@@ -364,27 +424,6 @@ const Settings = () => {
                 checked={darkMode}
                 onChange={handleDarkModeToggle}
               />
-              <ToggleSwitch
-                label="Email Notifications"
-                description="Receive email alerts about account activity and important updates."
-                checked={settingsData.preferences.emailNotifications}
-                onChange={(value) => handlePreferenceToggle("emailNotifications", value)}
-                disabled={savingPreferenceKey === "emailNotifications"}
-              />
-              <ToggleSwitch
-                label="Pickup Updates"
-                description="Get notified when pickup requests move through their status flow."
-                checked={settingsData.preferences.pickupUpdates}
-                onChange={(value) => handlePreferenceToggle("pickupUpdates", value)}
-                disabled={savingPreferenceKey === "pickupUpdates"}
-              />
-              <ToggleSwitch
-                label="Reminder Alerts"
-                description="Receive reminders before upcoming pickup windows and deadlines."
-                checked={settingsData.preferences.reminderAlerts}
-                onChange={(value) => handlePreferenceToggle("reminderAlerts", value)}
-                disabled={savingPreferenceKey === "reminderAlerts"}
-              />
             </div>
 
             <div className="settings-inline-form">
@@ -461,7 +500,11 @@ const Settings = () => {
               </div>
               <div className="account-info-item">
                 <span>Phone</span>
-                <strong>{settingsData.phone || "Not provided"}</strong>
+                <strong>
+                  {settingsData && settingsData.phone && settingsData.phone.trim() !== ""
+                    ? settingsData.phone
+                    : "Not provided"}
+                </strong>
               </div>
               <div className="account-info-item">
                 <span>Pickup Default</span>
