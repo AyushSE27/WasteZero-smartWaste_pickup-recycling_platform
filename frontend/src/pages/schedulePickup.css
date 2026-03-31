@@ -1,0 +1,322 @@
+.schedule-container {
+  max-width: 950px;
+  margin: 0 auto;
+  padding: 10px 0 40px;
+}
+
+.header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.header p {
+  color: #777;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+/* ================= TABS ================= */
+.tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.tab {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid #e4e7ec;
+  background: #f9fafb;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.tab.active {
+  background: #2d89ef;
+  color: white;
+  border-color: #2d89ef;
+}
+
+.tab:hover {
+  background: #2d89ef;
+  color: white;
+}
+
+/* ================= CARD ================= */
+.card {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+/* ================= FORM ================= */
+.card h3 {
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  display: block;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e4e7ec;
+  font-size: 14px;
+  margin-bottom: 18px;
+  transition: 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #2d89ef;
+  box-shadow: 0 0 0 3px rgba(45, 137, 239, 0.15);
+}
+
+/* ================= ROW LAYOUT ================= */
+.row {
+  display: flex;
+  gap: 20px;
+}
+
+.row > div {
+  flex: 1;
+}
+
+/* ================= BUTTONS ================= */
+.next-btn,
+.submit-btn {
+  background: #2d89ef;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.next-btn:hover,
+.submit-btn:hover {
+  background: #1e6fd9;
+}
+
+.btn-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-row button:first-child {
+  background: #f1f3f5;
+  color: #333;
+}
+
+/* ================= CHECKBOX GRID ================= */
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.checkbox-grid label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f9fafb;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.checkbox-grid label:hover {
+  background: #eef2f7;
+}
+
+/* ================= HISTORY ================= */
+.card-history {
+  margin-top: 25px;
+  gap: 10px;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+}
+.prime-btn {
+  background: #bccbdd;
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 15px 20px;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+.prime-btn:hover{
+    background: #7c8ea8;
+}
+.history-item {
+  border-bottom: 1px solid #eee;
+  padding: 15px 0;
+}
+
+.history-item h4 {
+  margin-bottom: 6px;
+}
+
+.delete-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: #b02a37;
+}
+/* ===== MODERN WASTE GRID ===== */
+.waste-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.waste-card {
+  background: #f9fafb;
+  padding: 18px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: 0.25s ease;
+  font-weight: 500;
+}
+
+.waste-card:hover {
+  background: #eef2f7;
+  transform: translateY(-2px);
+}
+
+.waste-card.selected {
+  border-color: #2d89ef;
+  background: #e8f1ff;
+  box-shadow: 0 6px 15px rgba(45, 137, 239, 0.15);
+}
+
+.waste-icon {
+  font-size: 22px;
+}
+
+/* ===== PICKUP STATUS BADGE ===== */
+/* ================= PICKUP CARD ================= */
+
+.pickup-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #eee;
+  transition: 0.2s ease;
+}
+
+.pickup-card:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+/* TOP ROW */
+.pickup-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.pickup-id {
+  font-weight: 600;
+  font-size: 14px;
+  color: #2d89ef;
+}
+
+/* STATUS */
+.pickup-status {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.pickup-status.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.pickup-status.assigned {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.pickup-status.completed {
+  background: #d4edda;
+  color: #155724;
+}
+
+.pickup-status.cancelled {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* META ROW */
+.pickup-meta {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+  margin-bottom: 15px;
+  color: #555;
+}
+
+/* DETAILS */
+.pickup-details p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+/* ACTIONS */
+.pickup-actions {
+  margin-top: 15px;
+}
+
+.delete-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.delete-btn:hover {
+  background: #c82333;
+}
