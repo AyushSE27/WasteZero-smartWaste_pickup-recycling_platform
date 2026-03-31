@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, Link } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
@@ -15,6 +15,7 @@ import ForgotPassword from "./pages/ForgetPassword";
 import ResetPassword from "./pages/ResetPassword";
 import SchedulePickup from "./pages/SchedulePickup";
 import AdminPickups from "./pages/AdminPickups";
+import Settings from "./pages/Settings";
 import NgoDashboard from "./Dashboard/NgoDashboard";
 import VolunteerDashboard from "./Dashboard/VolunteerDashboard";
 import RoleBasedDashboard from "./Dashboard/RoleBasedDashboard";
@@ -109,6 +110,7 @@ function App() {
           <Route path="notifications" element={<Notifications />} />
           <Route path="messages" element={<Messages />} />
           <Route path="schedule" element={<SchedulePickup />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />

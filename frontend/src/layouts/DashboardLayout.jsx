@@ -8,8 +8,6 @@ import {
   FaChartBar,
   FaUser,
   FaCog,
-  FaMoon,
-  FaSun,
   FaBars,
   FaBell,
 } from "react-icons/fa";
@@ -33,6 +31,15 @@ const DashboardLayout = () => {
     document.body.className = darkMode ? "dark" : "";
     localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
+
+  useEffect(() => {
+    const handleThemeChange = (event) => {
+      setDarkMode(Boolean(event.detail?.darkMode));
+    };
+
+    window.addEventListener("wastezero-theme-change", handleThemeChange);
+    return () => window.removeEventListener("wastezero-theme-change", handleThemeChange);
+  }, []);
 
   return (
     <div className={`dashboard ${collapsed ? "collapsed" : ""}`}>
@@ -87,11 +94,6 @@ const DashboardLayout = () => {
             <FaCog /> {!collapsed && "Settings"}
           </NavLink>
         </nav>
-        {/* Dark Mode Toggle */}
-        <div className="dark-toggle" onClick={() => setDarkMode(!darkMode)}>
-          {darkMode ? <FaSun /> : <FaMoon />}
-          {!collapsed && <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>}
-        </div>
         <div className="nav-links">
           {token && (
             <>

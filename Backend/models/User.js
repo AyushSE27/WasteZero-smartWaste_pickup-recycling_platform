@@ -44,8 +44,30 @@ const userSchema = new mongoose.Schema(
     location: {
       type: String,
     },
+    defaultPickupLocation: {
+      type: String,
+      default: "",
+    },
     bio: {
       type: String,
+    },
+    avatar: {
+      type: String,
+      default: "",
+    },
+    preferences: {
+      emailNotifications: {
+        type: Boolean,
+        default: true,
+      },
+      pickupUpdates: {
+        type: Boolean,
+        default: true,
+      },
+      reminderAlerts: {
+        type: Boolean,
+        default: true,
+      },
     },
     otp: {
       type: String,

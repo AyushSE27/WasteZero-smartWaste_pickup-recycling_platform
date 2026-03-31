@@ -1,8 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { getProfile, updateProfile, changePassword } from "../services/authService";
 
 const Profile = () => {
+  const location = useLocation();
   const token = localStorage.getItem("token");
+  const profileHeadingRef = useRef(null);
+  const passwordHeadingRef = useRef(null);
 
   const [activeTab, setActiveTab] = useState("profile");
   const [profileData, setProfileData] = useState({
@@ -24,6 +28,28 @@ const Profile = () => {
   useEffect(() => {
     fetchProfile();
   }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const requestedTab = params.get("tab");
+
+    if (requestedTab === "password") {
+      setActiveTab("password");
+      window.requestAnimationFrame(() => {
+        passwordHeadingRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        passwordHeadingRef.current?.focus();
+      });
+      return;
+    }
+
+    if (requestedTab === "edit") {
+      setActiveTab("profile");
+      window.requestAnimationFrame(() => {
+        profileHeadingRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        profileHeadingRef.current?.focus();
+      });
+    }
+  }, [location.search]);
 
   const fetchProfile = async () => {
     try {
@@ -119,7 +145,7 @@ const Profile = () => {
 
       {activeTab === "profile" && (
         <>
-          <h3>Personal Information</h3>
+          <h3 ref={profileHeadingRef} tabIndex="-1">Personal Information</h3>
           <p className="helper-text">
             Update your personal information and profile details
           </p>
@@ -178,7 +204,7 @@ const Profile = () => {
 
       {activeTab === "password" && (
         <>
-          <h3>Change Password</h3>
+          <h3 ref={passwordHeadingRef} tabIndex="-1">Change Password</h3>
           <p className="helper-text">
             Update your password to secure your account
           </p>

@@ -31,6 +31,7 @@ app.use("/api/dashboard", require("./routes/dashboardRoutes"));
 app.use("/uploads", express.static("uploads"));
 app.use("/api/pickups", require("./routes/pickupRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
+app.use("/api/user", require("./routes/userRoutes"));
 
 /* ================= SOCKET.IO ================= */
 io.on("connection", (socket) => {
